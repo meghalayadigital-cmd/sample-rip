@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AR Video Scan</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #fullscreenVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      background: black;
+      display: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <video 
+    id="fullscreenVideo"
+    playsinline
+    webkit-playsinline
+    autoplay
+  ></video>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1;"
+    color-space="sRGB"
+    renderer="colorManagement: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+  >
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <a-entity mindar-image-target="targetIndex: 0"></a-entity>
+
+  </a-scene>
+
+<script>
+
+const video = document.getElementById("fullscreenVideo");
+
+const target = document.querySelector("[mindar-image-target]");
+
+target.addEventListener("targetFound", () => {
+
+  video.src = "./video.mp4";
+  video.style.display = "block";
+  video.play().catch(()=>{});
+
+});
+
+target.addEventListener("targetLost", () => {
+
+  video.pause();
+  video.currentTime = 0;
+  video.style.display = "none";
+
+});
+
+</script>
+
+</body>
+</html>
